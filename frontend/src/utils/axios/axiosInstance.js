@@ -1,16 +1,13 @@
 import axios from 'axios';
-
-// Automatically switch depending on the environment
-export const baseUrl = `${process.env.REACT_APP_API_URL || 'http://localhost:8000'}/api/v2`;
+import { baseUrl } from '.';
 
 const axiosInstance = axios.create({
-  baseURL: baseUrl,
+  baseURL: baseUrl, // or use BaseUrl if needed
   headers: {
     'Content-Type': 'application/json',
   },
 });
 
-// Attach token dynamically
 axiosInstance.interceptors.request.use(
   (config) => {
     const token = localStorage.getItem('access_token');
@@ -19,7 +16,9 @@ axiosInstance.interceptors.request.use(
     }
     return config;
   },
-  (error) => Promise.reject(error)
+  (error) => {
+    return Promise.reject(error);
+  }
 );
 
 export default axiosInstance;
