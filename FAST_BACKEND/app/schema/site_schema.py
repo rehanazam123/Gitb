@@ -1,0 +1,517 @@
+from app.schema.base_schema import ModelBaseInfo, FindBase, SearchOptions, FindResult, Blank
+from pydantic import BaseModel, validator
+from typing import Generic, TypeVar, Optional, List, Dict
+from pydantic.generics import GenericModel
+from datetime import datetime, date
+
+DataT = TypeVar('DataT')
+
+
+class SiteBase(BaseModel):
+    site_name: str
+    site_type: str
+    region: str
+    city: str
+    city: str
+    latitude: str
+    longitude: str
+    status: str
+
+
+class SiteDetails(SiteBase):
+    id: int
+
+class GetSitesResponse(BaseModel):
+    sites: List[SiteDetails]
+
+
+class SiteCreate(SiteBase):
+    pass
+
+
+class SiteDetails_get(SiteBase):
+    id: int
+    energy_efficiency: Optional[float] = None
+    power_input: Optional[float] = None
+    power_output: Optional[float] = None
+    pue: Optional[float] = None
+    datatraffic: Optional[float] = None
+    pcr:Optional[float]=None
+    site_cost:Optional[float]=None
+    co2emmision:Optional[str]=None
+    num_racks: Optional[int] = None
+    num_devices: Optional[int] = None
+
+
+class SiteUpdate(BaseModel):
+    site_name: Optional[str] = None
+    site_type: Optional[str] = None
+    region: Optional[str] = None
+    city: Optional[str] = None
+    latitude: Optional[str] = None
+    longitude: Optional[str] = None
+    status: Optional[str] = None
+    total_devices: Optional[str] = None
+
+
+class Site(ModelBaseInfo, SiteBase):
+    pass
+
+
+class FindSite(FindBase, SiteBase):
+    pass
+
+
+class UpsertSite(SiteBase):
+    pass
+
+class EnergyEfficiencyResponse(BaseModel):
+    time: str
+    energy_efficiency_per: Optional[float] = None
+    total_POut_kW: Optional[float] = None
+    total_PIn_kW: Optional[float] = None
+    co2_tons: Optional[float] = None
+    co2_kgs : Optional[float] = None
+    pue: Optional[float] = None
+    baseline_model:Optional[str]=None
+class EnergyEfficiencyDetails(BaseModel):
+    time: Optional[str] = None  # Start and end time of the metrics calculation
+    energy_consumption: Optional[float] = None  # Energy consumption in kW
+    total_POut_kW: Optional[float] = None
+    total_PIn_kW: Optional[float] = None
+    eer_per: Optional[float] = None  # Energy Efficiency Ratio
+    co2_tons: Optional[float] = None #
+    co2_kgs: Optional[float] = None
+    datatraffic_MB:Optional[float] =None
+    dataAllocated_MB:Optional[float] = None # Bandwidth
+    pcr_WMB:Optional[float] = None #
+    traffic_throughput_MBW: Optional[float] = None  #
+    data_utilization_per:Optional[float]=None
+    device_name: Optional[str] = None  # Device name
+    ip_address: Optional[str] = None  # APIC controller IP
+    model_no:Optional[str] = None #
+    energy_cost_AED:Optional[float] = None
+
+class FindSiteResult(FindResult):
+    founds: Optional[List[Site]]
+    search_options: Optional[SearchOptions]
+
+class CustomResponse(GenericModel, Generic[DataT]):
+    message: str
+    data: Optional[DataT]
+    status_code: int
+
+
+T = TypeVar("T")
+
+
+class CustomResponse1(BaseModel, Generic[T]):
+    message: str
+    data: T
+    status_code: int
+
+
+class PCRMetricsDetails(BaseModel):
+    time: Optional[str]
+    PCR: Optional[float]
+    data_traffic: Optional[float]
+    energy_efficiency: Optional[float]
+    power_efficiency: Optional[float]
+    total_POut: Optional[float]
+    total_PIn: Optional[float]
+    co2_kgs: Optional[float]
+    co2_tons: Optional[float]
+
+
+class SiteDetails1(BaseModel):
+    site_name: Optional[str] = None
+    site_type: Optional[str] = None
+    region: Optional[str] = None
+    city: Optional[str] = None
+    latitude: Optional[str] = None
+    longitude: Optional[str] = None
+    status: Optional[str] = None
+    total_devices: Optional[str] = None
+
+
+class SitePowerConsumptionResponse(BaseModel):
+    total_power: Optional[float]
+    average_power: Optional[float]
+    total_cost: Optional[float]
+    max_power: Optional[float]
+    total_power_duration: Optional[str]
+
+
+
+class EnergyConsumptionMetricsDetails(BaseModel):
+    time: str
+    energy_efficiency: Optional[float] = None
+    total_POut: Optional[float] = None
+    total_PIn: Optional[float] = None
+    average_energy_consumed: Optional[float] = None
+    power_efficiency: Optional[float] = None
+    co2_tons: Optional[float] = None
+    co2_kgs : Optional[float] = None
+    data_traffic : Optional[float] = None
+
+
+class DeviceEnergyMetric(BaseModel):
+    device_name: Optional[str] = None
+    hardware_version: Optional[str] = None
+    manufacturer: Optional[str] = None
+    pn_code: Optional[str] = None
+    serial_number: Optional[str] = None
+    software_version: Optional[str] = None
+    status: Optional[str] = None
+    site_name: Optional[str] = None
+    apic_controller_ip: Optional[str] = None
+    PE: Optional[float] = None
+    PUE: Optional[float] = None
+    current_power: Optional[float] = None
+    eer: Optional[float] = None
+    time: Optional[datetime] = None
+
+
+
+class HourlyEnergyMetricsResponse(BaseModel):
+    metrics: List[DeviceEnergyMetric]
+
+
+class DevicePowerMetric(BaseModel):
+    device_name: Optional[str] = None
+    hardware_version: Optional[str] = None
+    manufacturer: Optional[str] = None
+    pn_code: Optional[str] = None
+    serial_number: Optional[str] = None
+    software_version: Optional[str] = None
+    status: Optional[str] = None
+    site_name: Optional[str] = None
+    apic_controller_ip: Optional[str] = None
+    total_power: Optional[float] = None
+    max_power: Optional[float] = None
+    current_power: Optional[float] = None
+    time: Optional[datetime] = None
+
+
+class HourlyDevicePowerMetricsResponse(BaseModel):
+    metrics: List[DevicePowerMetric]
+
+
+class DevicePowerConsumption(BaseModel):
+    id: Optional[int] = None
+    device_name: Optional[str] = None
+    total_power: Optional[float] = None
+    total_bandwidth: Optional[float] = None
+    traffic_speed: Optional[float] =None
+    bandwidth_utilization: Optional[float] = None
+    pcr:Optional[float]=None
+    co2emmissions: Optional[float]=None
+    ip_address: Optional[str] = None
+
+class DevicePowerConsumption1(BaseModel):
+    id: Optional[int] = None
+    device_name: Optional[str] = None
+    total_power: Optional[str] = None
+    total_powerout:Optional[str]=None
+    total_bandwidth: Optional[str] = None
+    traffic_speed: Optional[str] =None
+    bandwidth_utilization: Optional[str] = None
+    pcr:Optional[str]=None
+    co2emmissions: Optional[str]=None
+    ip_address: Optional[str] = None
+
+
+
+class TopDevicesPowerResponse(BaseModel):
+    top_devices: List[DevicePowerConsumption1]
+
+
+class TrafficThroughputMetricsDetails(BaseModel):
+    time: str
+    total_bytes_rate_last: Optional[float]
+    energy_consumption: Optional[float]
+
+
+from pydantic import BaseModel
+from typing import List, Optional
+
+
+class DeviceTrafficThroughputMetric1(BaseModel):
+    device_name: Optional[str] = None
+    hardware_version: Optional[str] = None
+    manufacturer: Optional[str] = None
+    pn_code: Optional[str] = None
+    serial_number: Optional[str] = None
+    software_version: Optional[str] = None
+    status: Optional[str] = None
+    site_name: Optional[str] = None
+    apic_controller_ip: Optional[str] = None
+    traffic_throughput: Optional[float] = None
+    time: Optional[datetime] = None
+    current_power: Optional[float] = None
+    PE: Optional[float] = None
+
+
+class TrafficThroughputMetricsResponse(BaseModel):
+    metrics: List[DeviceTrafficThroughputMetric1]
+
+
+class ComparisonDeviceMetricsDetails(BaseModel):
+    device_name: Optional[str]
+    time: Optional[str]
+    total_power: Optional[float]
+
+
+class ComparisonTrafficMetricsDetails(BaseModel):
+    device_name: Optional[str]
+    time: Optional[str]
+    total_bytes_rate_last_gb: Optional[float]
+
+
+class DevicePowerComparisonPercentage(BaseModel):
+    device_name: Optional[str]
+    average_power_percentage: Optional[float]
+
+
+class CustomResponse100(BaseModel):
+    message: str
+    data: Dict[str, List[ComparisonDeviceMetricsDetails]]
+    status_code: int
+
+
+class PasswordGroupCreate(BaseModel):
+    password_group_name: str
+    password_group_type: str
+    username: str
+    password: str
+
+
+class PasswordGroupResponse(BaseModel):
+    id: int
+    password_group_name: str
+    password_group_type: str
+    username: str
+    password: str
+
+    class Config:
+        orm_mode = True
+
+
+class PasswordGroupUpdate(BaseModel):
+    password_group_name: str = None
+    password_group_type: str = None
+    username: str = None
+    password: str = None
+
+
+class DevicesCreate(BaseModel):
+    ip_address: str
+    device_type: Optional[str]
+    device_name: Optional[str]
+    site_id: Optional[int]
+    rack_id: Optional[int]
+    rack_unit: Optional[int]
+    password_group_id: Optional[int]
+
+
+class DevicesUpdate(BaseModel):
+    ip_address: Optional[str]
+    device_type: Optional[str]
+    device_name: Optional[str]
+    site_id: Optional[int]
+    rack_id: Optional[int]
+    rack_unit: Optional[int]
+    password_group_id: Optional[int]
+
+
+class DevicesResponse(BaseModel):
+    id: int
+    device_ip: str
+    device_type: Optional[str]
+    device_name: Optional[str]
+    site_name: Optional[str]
+    rack_name: Optional[str]
+    rack_unit: Optional[int]
+    password_group_id: Optional[int]
+    password_group_name: Optional[str]
+    OnBoardingStatus: Optional[bool]
+    created_at: Optional[datetime]
+    site_id: Optional[int]
+    collection_status: Optional[bool]
+
+    vendor_name: Optional[str]
+    messages: Optional[str]
+
+    class Config:
+        orm_mode = True
+
+
+
+class DevicesResponse(BaseModel):
+    id: int
+    ip_address: str
+    device_type: Optional[str]
+    device_name: Optional[str]
+    site_name: Optional[str]
+    rack_name: Optional[str]
+    rack_unit: Optional[int]
+    password_group_id: Optional[int]
+    password_group_name: Optional[str]
+    vendor_name: Optional[str]
+    device_type:Optional[str]
+    vendor_id: Optional[int]
+    device_type_id: Optional[int]
+    OnBoardingStatus: Optional[bool]
+    created_at: Optional[datetime]
+    site_id: Optional[int]
+    collection_status: Optional[bool]
+    messages: Optional[str]
+
+    class Config:
+        orm_mode = True
+
+
+class RackResponse(BaseModel):
+    id: int
+    rack_name: str
+
+    class Config:
+        orm_mode = True
+
+
+class GetRacksResponse(BaseModel):
+    racks: List[RackResponse]
+
+
+class EnergyConsumptionMetricsDetails1(BaseModel):
+    time: Optional[str] = None
+    energy_consumption: Optional[float] = None
+    total_POut: Optional[float] = None
+    total_PIn: Optional[float] = None
+    power_efficiency: Optional[float] = None
+
+
+class DeviceEnergyDetailResponse123(BaseModel):
+    device_name: Optional[str] = None
+    hardware_version: Optional[str] = None
+    manufacturer: Optional[str] = None
+    pn_code: Optional[str] = None
+    serial_number: Optional[str] = None
+    software_version: Optional[str] = None
+    status: Optional[str] = None
+    site_name: Optional[str] = None
+    apic_controller_ip: Optional[str] = None
+    PE: Optional[float] = None
+    PUE: Optional[float] = None
+    current_power: Optional[float] = None
+    time: Optional[datetime] = None
+
+
+class DeviceCreateRequest(BaseModel):
+    ip_address: str
+    device_name: Optional[str] = None
+    site_id: int
+    rack_id: int
+    vendor_id: int
+    password_group_id: int
+    device_type_id: Optional[int] = None
+
+
+class OnboardingRequest(BaseModel):
+    device_ids: List[int]
+
+
+class CSPCDevicesWithSntcResponse(BaseModel):
+    id: Optional[int] = None
+    # Fields from CSPCDevices
+    vendor: Optional[str] = None
+    device_family: Optional[str] = None
+    model_name: Optional[str] = None
+    device_name: Optional[str] = None
+    device_type: Optional[str] = None
+    software_version: Optional[str] = None
+
+    # Fields from DevicesSntc
+    hw_eol_ad: Optional[date] = None
+    hw_eos: Optional[date] = None
+    sw_EoSWM: Optional[date] = None
+    hw_EoRFA: Optional[date] = None
+    sw_EoVSS: Optional[date] = None
+    hw_EoSCR: Optional[date] = None
+    hw_ldos: Optional[date] = None
+
+    class Config:
+        orm_mode = True
+
+
+class EnergyConsumptionMetricsDetails2(BaseModel):
+    time: Optional[str] = None  # Start and end time of the metrics calculation
+    energy_consumption: Optional[float] = None  # Energy consumption in kW
+    total_POut: Optional[float] = None  # Total Power Output in kW
+    total_PIn: Optional[float] = None  # Total Power Input in kW
+    eer: Optional[float] = None  # Energy Efficiency Ratio
+    pue: Optional[float] = None  # Power Usage Effectiveness
+    co2e: Optional[float] = None #
+    datatraffic:Optional[float] =None
+    bandwidth:Optional[float] = None # Bandwidth
+    pcr:Optional[float] = None #
+    bandwidth_utilization:Optional[float]=None
+    device_name: Optional[str] = None  # Device name
+    ip_address: Optional[str] = None  # APIC controller IP
+    model_no:Optional[str] = None #
+    energy_cost_AED:Optional[float] = None
+
+
+
+class co2emmisionDetails(BaseModel):
+    time: Optional[str] = None  # Start and end time of the metrics calculation
+    energy_consumption: Optional[float] = None  # Energy consumption in kW
+    total_POut: Optional[float] = None  # Total Power Output in kW
+    total_PIn: Optional[float] = None  # Total Power Input in kW
+    power_efficiency: Optional[float] = None  # Power Efficiency percentage
+    eer: Optional[float] = None  # Energy Efficiency Ratio
+    pue: Optional[float] = None  # Power Usage Effectiveness
+    device_name: Optional[str] = None  # Device name
+    co2: Optional[float] = None #
+    apic_controller_ip: Optional[str] = None  # APIC controller IP
+
+
+class OpenAIResponse(BaseModel):
+    answer: str
+
+class CustomResponse_openai(BaseModel, Generic[T]):
+    message: str
+    data: Optional[T]
+    status_code: int
+
+
+
+
+
+class EnergyConsumptionMetricsDetailsNew(BaseModel):
+    model_no: str
+    device_name: str
+    ip_address: str
+    site_name: str
+    rack_name: str
+    model_count: int
+    avg_total_PIn: Optional[float] = 0
+    avg_total_POut: Optional[float] = 0
+    avg_data_traffic: Optional[float] = 0
+    avg_co2_emissions: Optional[float] = 0
+    class Config:
+        orm_mode = True
+
+
+class DeviceRequest(BaseModel):
+    device_id: int
+    site_id:Optional[int] = 0
+
+class modelResponse(BaseModel):
+    limit: Optional[int] = 0
+    site_id: Optional[int] = 0
+    rack_id: Optional[int] = 0
+    vendor_id: Optional[int] = 0
+    duration: Optional[str] = ''
+
+
